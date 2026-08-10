@@ -1,6 +1,8 @@
 # CALL-E: Your Code Is Calling: Winning Idea Dossier
 
-> **Status:** One idea selected; no product name assigned; no implementation or calls started.
+> **Status:** One idea selected; no product name assigned; implementation is
+> underway and real calls remain disabled. See
+> [`APPLICATION_STATUS.md`](./APPLICATION_STATUS.md) for current engineering state.
 > **Deadline:** September 14, 2026 at 8:45 AM PT.
 > **Primary prize target:** Most Practical Use Case.
 > **Ground truth:** [`HACKATHON.md`](./HACKATHON.md) is authoritative for rules and submission fields.
@@ -201,11 +203,11 @@ conflict/retry queue    reviewable directory delta
    +-----------> human publication gate
 ```
 
-### Recommended stack
+### Selected stack
 
-- TypeScript, Next.js or Vite/React.
+- TypeScript, Next.js, and React.
 - Node backend with `@call-e/calle` SDK or documented API.
-- SQLite/PostgreSQL for claims, runs, recipients, call attempts, and audit events.
+- PostgreSQL for claims, runs, recipients, call attempts, and audit events.
 - Webhook endpoint plus polling reconciliation.
 - JSON Schema/Zod validation.
 - MapLibre only as a secondary geographic view; the evidence ledger is primary.
@@ -495,46 +497,40 @@ Submit with nearly three hours of buffer.
 - 3:2 thumbnail: stale row -> live call -> evidence-backed delta.
 - Gallery: import, preview, live run, evidence review, ambiguity, public snapshot, architecture, PR.
 
-## Repository plan
+## Repository ownership plan
+
+The early concept sketch has been reconciled with the production ownership
+contract in `README.md` and `AGENTS.md`. Use these names; do not recreate the
+superseded `apps/web`, `server/`, or split `claims` package layout.
 
 ```text
 /
 ├── README.md
-├── LICENSE
+├── APPLICATION_STATUS.md
 ├── apps/
-│   └── web/
+│   └── operator/
 ├── packages/
-│   ├── directory-import/
-│   ├── claims/
-│   ├── freshness-policy/
-│   ├── call-planner/
-│   ├── calle-client/
-│   ├── evidence-validator/
-│   ├── review-workflow/
-│   └── publisher/
-├── server/
-│   ├── api/
-│   ├── webhooks/
-│   ├── reconcile/
-│   └── storage/
-├── fixtures/
-│   ├── directory.csv
-│   ├── call-results/
-│   └── expected-deltas.json
+│   ├── import/
+│   ├── freshness/
+│   ├── call-plan/
+│   ├── calle/
+│   ├── evidence/
+│   └── review-publish/
 ├── tests/
 │   ├── fake-calle/
-│   ├── idempotency/
-│   ├── evidence/
-│   ├── safety/
+│   ├── fixtures/
+│   ├── integration/
 │   └── e2e/
-└── docs/
-    ├── architecture.svg
-    ├── safety.md
-    ├── call-script.md
-    ├── schema.md
-    ├── privacy.md
-    └── demo-runbook.md
+├── docs/
+├── adr/
+├── evidence/
+├── scripts/
+└── infra/
 ```
+
+[`APPLICATION_STATUS.md`](./APPLICATION_STATUS.md) distinguishes directories
+that contain a narrow foundation boundary from ownership areas that are actually
+supported end to end.
 
 ## What would make this lose anyway
 

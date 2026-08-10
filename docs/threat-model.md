@@ -3,6 +3,9 @@
 - **Scope:** Tier 0 local runtime, package-install boundary, Next.js operator health surface, API/worker readiness, fake CALL-E test service, PostgreSQL migration, OpenTelemetry ingest, and lifecycle control.
 - **Status:** not yet in production; real calls, directory uploads, provider credentials, webhooks, authentication, review, and publication are not enabled.
 - **Review date:** 2026-08-09
+- **Implementation cross-check:** [`APPLICATION_STATUS.md`](../APPLICATION_STATUS.md)
+  records which later product boundaries are still absent. This threat model must
+  be expanded before any of them is enabled.
 
 ## Assets and trust boundaries
 
@@ -34,3 +37,21 @@
 - Current CALL-E webhooks are unsigned; ADR-0002 requires canonical API re-fetch and transactional deduplication before any sensitive transition.
 - Local PostgreSQL uses a documented non-secret development password and loopback binding. It must never be reused in staging/production.
 - Real provider terms, consent, SDK licence, API quotas, retention, and use-case permission remain unverified external facts. No real call is enabled.
+
+## Mandatory next review triggers
+
+Perform and commit a threat-model update before adding any of the following:
+
+- directory file upload, URL import, PDF/CSV/JSON parser, archive, or remote fetch;
+- CALL-E credential, REST request, webhook receiver, polling reconciler, or live
+  provider mode;
+- transcript/evidence persistence, staff-identity processing, or model-assisted
+  grounding;
+- operator authentication, role/authority separation, public delta feed, export,
+  or hosted endpoint;
+- application data migration, backup/restore, deployment, rollback, or
+  emergency-disable authority.
+
+Each update must name size/time/concurrency limits, authentication and
+authorization, failure behavior, retention, observability without sensitive
+content, cancellation/reconciliation, and the tests that attack the boundary.

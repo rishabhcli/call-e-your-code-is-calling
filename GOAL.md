@@ -6,7 +6,7 @@
 >
 > **Repository:** CALL-E: Your Code Is Calling
 > **Product-name status:** unassigned. Do not invent one. Use descriptive component names only.
-> **Hackathon deadline:** Sep 14, 8:45 AM PT (36 days out)
+> **Hackathon deadline:** Sep 14, 2026 at 8:45 AM PT
 > **Devpost:** https://call-e.devpost.com/
 > **Prize pool (as listed):** $10,000
 > **Final submit step:** https://devpost.com/submit-to/30579-call-e/manage/submissions/1131643/finalization
@@ -136,7 +136,7 @@ That sense is **not evidence about the goal.** The goal is defined in §1 and §
 
 ### 2.4 The deadline is a milestone inside the goal, not the goal
 
-The hackathon deadline (Sep 14, 8:45 AM PT (36 days out)) is a hard external constraint on **one artifact**: the submission. It is not the boundary of the work. Submitting is Tier 13, and Tier 13 is deliberately _not_ the last tier, because the epoch engine (§7) runs after it, forever. After the deadline passes — win, lose, or no result — **the goal in §1 is unchanged and the work continues.**
+The hackathon deadline (Sep 14, 2026 at 8:45 AM PT) is a hard external constraint on **one artifact**: the submission. It is not the boundary of the work. Submitting is Tier 13, and Tier 13 is deliberately _not_ the last tier, because the epoch engine (§7) runs after it, forever. After the deadline passes — win, lose, or no result — **the goal in §1 is unchanged and the work continues.**
 
 ---
 
@@ -218,11 +218,13 @@ Run this audit. It is designed so that it **cannot return an empty result** on a
 If you are resuming with partial or summarised context, do not re-plan and do not restart:
 
 1. Read this file (§1, §5, §10).
-2. Read the last 100 lines of `PROGRESS.md`.
-3. Read `BLOCKED.md` and `ASSUMPTIONS.md`.
-4. Run the fastest verification command in the repository to establish current true state.
-5. Select the next item by §10.
-6. Do it.
+2. Read `APPLICATION_STATUS.md` for the current implementation audit and ordered
+   handoff; treat its claims as provisional until the named checks are rerun.
+3. Read the last 100 lines of `PROGRESS.md`.
+4. Read `BLOCKED.md` and `ASSUMPTIONS.md`.
+5. Run the fastest verification command in the repository to establish current true state.
+6. Select the next item by §10.
+7. Do it.
 
 Do not write a "here's where we are" summary as your output. Write it into `PROGRESS.md` as an artifact and spend the turn on the work.
 
@@ -757,7 +759,7 @@ The hackathon submission is generated **from** the production system. It is neve
 - Epoch 3: tighten the numeric threshold and satisfy it again.
 - Epoch 4+: attack the gate adversarially, find the input class that breaks it, then satisfy it again on the widened class. A gate that has never failed has never been tested.
 
-**Submission mechanics** (deadline Sep 14, 8:45 AM PT (36 days out)):
+**Submission mechanics** (deadline Sep 14, 2026 at 8:45 AM PT):
 
 - Project name within 60 characters, elevator pitch within 200, thumbnail at 3:2.
 - "About the project" covering inspiration, what it does, how it was built, challenges, accomplishments, what was learned, and what is next — every claim traceable to evidence.
@@ -886,6 +888,7 @@ Blocked means: an external credential, a physical device, a human approval that 
 ## 11. Journal, evidence, and artifact protocol
 
 - `PROGRESS.md` — append-only. Per work item: what was built, the commands run, the evidence produced, what is now true that was not true before, and the next item selected by §10. Never rewrite history in this file.
+- `APPLICATION_STATUS.md` — replaceable current-state audit. Keep package/tier/invariant status, verification truth, and the ordered next-agent queue aligned with the implementation; history belongs in `PROGRESS.md` instead.
 - `ASSUMPTIONS.md` — every decision made without the user, with the reasoning and the cheapest way to verify it later. Choosing the safest interpretation and recording it here is **always** preferred to stopping to ask.
 - `BLOCKED.md` — external blockers only, with exact unblock requests.
 - `adr/` — one file per architectural decision: context, options, decision, consequences, and how it could be reversed.

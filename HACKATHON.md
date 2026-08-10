@@ -2,7 +2,10 @@
 
 > Reference dossier for the Devpost hackathon this repo submits to.
 > Generated Aug 9, 5:19 PM PT. Devpost account `risban933`.
-> **This repo has no project name and no code yet by design.**
+> **Snapshot boundary:** form fields and external requirements below were captured
+> on 2026-08-09. The repository still has no assigned product name, but
+> implementation has since started; use [`APPLICATION_STATUS.md`](./APPLICATION_STATUS.md)
+> for current engineering state.
 
 ## At a glance
 
@@ -11,7 +14,7 @@
 | **Hackathon** | CALL-E: Your Code Is Calling |
 | **Devpost URL** | https://call-e.devpost.com/ |
 | **Devpost challenge ID** | 30579 |
-| **Submission deadline** | **Sep 14, 8:45 AM PT** (36 days out) |
+| **Submission deadline** | **Sep 14, 2026 at 8:45 AM PT** |
 | **Deadline (ISO)** | 2026-09-14T11:45:00-04:00 |
 | **Prize pool (as listed)** | $10,000 |
 | **Registration status** | ✅ Registered |
@@ -375,7 +378,7 @@ Blog post feature
 
 ## Submission checklist
 
-- [ ] Decide the project concept
+- [x] Decide the project concept — selected in `WINNING_IDEA.md`
 - [ ] Project name (<= 60 chars)
 - [ ] Elevator pitch (<= 200 chars)
 - [ ] Thumbnail image (3:2)

@@ -6,7 +6,7 @@
 
 ## Repository status
 
-Implementation is underway. The repository contains the Tier 0 executable foundation, repository-isolated local services, and early typed domain packages; none of those intermediate surfaces constitutes production. The current evidence-backed state is recorded in `PROGRESS.md`, `SUPPORT_MATRIX.md`, and `evidence/`. Until every condition in `GOAL.md` section 5 is simultaneously verified, the accurate status is **not yet in production**.
+Implementation is underway. The repository contains most of the Tier 0 executable foundation, repository-isolated local services, and early typed domain packages; none of those intermediate surfaces constitutes an operator workflow or production. The current implementation, invariant gaps, verification state, and ordered next-agent queue are recorded in [`APPLICATION_STATUS.md`](./APPLICATION_STATUS.md). Historical commands and findings remain in the append-only [`PROGRESS.md`](./PROGRESS.md) journal. Until every condition in `GOAL.md` section 5 is simultaneously verified, the accurate status is **not yet in production**.
 
 | Document | Authority |
 |---|---|
@@ -15,8 +15,20 @@ Implementation is underway. The repository contains the Tier 0 executable founda
 | [README.md](./README.md) | Product contract, architecture, production and release expectations |
 | [AGENTS.md](./AGENTS.md) | Binding implementation rules for every coding agent working in this repository |
 | [GOAL.md](./GOAL.md) | Standing goal, tier order, verification evidence, and repository-isolated runtime contract |
+| [APPLICATION_STATUS.md](./APPLICATION_STATUS.md) | Current implementation audit, invariant coverage, verification truth, and ordered work queue |
+| [docs/README.md](./docs/README.md) | Documentation map and update rules |
 
 If these documents disagree, preserve the external requirements in HACKATHON.md, then the product intent in WINNING_IDEA.md, and resolve the conflict explicitly in an ADR instead of guessing.
+
+### New-agent re-entry
+
+1. Read the authoritative documents in the order above through `GOAL.md`.
+2. Read `APPLICATION_STATUS.md`, then the last entry in `PROGRESS.md`,
+   `BLOCKED.md`, and `ASSUMPTIONS.md`.
+3. Confirm the exact toolchain, inspect `git status`, and run
+   `pnpm dev:preflight` before relying on prior runtime claims.
+4. Select the first applicable item in `GOAL.md` section 10.1. Do not start from
+   the most visually impressive missing feature.
 
 ## Product contract
 
@@ -150,6 +162,8 @@ Accessibility is a release gate, not a polish task. The production interface mus
 ├── HACKATHON.md              # External rules and submission facts
 ├── WINNING_IDEA.md           # Selected product/technical blueprint
 ├── GOAL.md                   # Standing goal-mode and verification contract
+├── APPLICATION_STATUS.md     # Current implementation and next-agent handoff
+├── PROGRESS.md               # Append-only historical verification journal
 ├── ports.env                 # Exclusive local port allocation
 ├── compose.yaml              # Repository-isolated PostgreSQL and telemetry
 ├── packages/import/

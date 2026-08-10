@@ -4,11 +4,11 @@ Every unverified decision is recorded here with the safest interpretation and th
 
 ## A-001 — Runtime and package-manager baseline
 
-- **Decision:** use a pinned pnpm workspace and a Node.js version range that covers the current local runtime while CI exercises an active LTS release. Direct and transitive dependencies will be locked exactly.
+- **Decision:** use a pinned pnpm workspace with exactly Node.js 24.19.0 and pnpm 11.20.0. Direct and transitive dependencies are locked exactly.
 - **Reasoning:** the approved architecture is TypeScript/Node/Next.js, pnpm is already available locally, and a workspace makes package ownership enforceable without importing application state into domain packages.
 - **Safety posture:** startup and bootstrap will reject unsupported Node or pnpm versions; no runtime will silently downgrade.
-- **Cheapest verification:** run `pnpm bootstrap` and the CI matrix from a clean checkout on every declared Node version, then update this entry with the exact supported range.
-- **Status:** pending toolchain compatibility verification.
+- **Cheapest verification:** run `pnpm bootstrap`, `pnpm verify-all`, and `pnpm verify:clean-checkout`, then confirm the same revision's GitHub Actions run.
+- **Status:** implemented and partially exercised; the audited `main` CI run failed during `setup-node` before pnpm activation, and the latest local `verify-all` timed out in semantic health. The gate remains open. See `APPLICATION_STATUS.md`.
 
 ## A-002 — Development infrastructure isolation
 
@@ -16,7 +16,7 @@ Every unverified decision is recorded here with the safest interpretation and th
 - **Reasoning:** PostgreSQL and OpenTelemetry must be real services, while the process and port contract prohibits global process/container operations. Compose project `call-e-your-code-is-calling` and PID metadata under `.dev/pids/` provide the narrowest cleanup boundary.
 - **Safety posture:** all host bindings are `127.0.0.1` and ports 4150-4159 only; shutdown verifies ownership before signaling a recorded process group and never uses broad process sweeps.
 - **Cheapest verification:** run lifecycle tests with a foreign listener inside a reserved port, verify preflight refuses it, then verify `dev:down` leaves an unrelated sentinel process untouched.
-- **Status:** pending implementation and adversarial test.
+- **Status:** implemented and covered by lifecycle integration tests for foreign-port refusal, semantic-readiness refusal, lifecycle lock ownership, and narrow shutdown. Broader crash/fault coverage remains required by later tiers.
 
 ## A-003 — OpenTelemetry ingest allocation
 
@@ -24,7 +24,7 @@ Every unverified decision is recorded here with the safest interpretation and th
 - **Reasoning:** a collector that merely accepts a TCP connection is not proven useful. A separate in-block ingest port lets `dev:health` send a canary and verify that it reaches the configured local export destination.
 - **Safety posture:** both host mappings bind `127.0.0.1`; no port outside 4150-4159 is allocated.
 - **Cheapest verification:** run `pnpm dev:health`, which must fail if either the collector health extension or the canary pipeline fails.
-- **Status:** pending implementation and lifecycle test.
+- **Status:** implemented; a direct `pnpm dev:health` run sent and located an end-to-end canary, but the latest full verification timed out in semantic health with an empty canary export at inspection time. Reproducibility is pending; production telemetry and load/resource verification remain later-tier work.
 
 ## A-004 — CALL-E adapter and unresolved SDK licence
 
