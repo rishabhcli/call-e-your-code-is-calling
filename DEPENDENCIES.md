@@ -1,6 +1,6 @@
 # Dependency and supply-chain register
 
-> Review date: 2026-08-09. `pnpm dependency:check` proves direct-manifest coverage and exact pins; `pnpm-lock.yaml` pins the transitive graph; `pnpm security:audit` fails on high or critical advisories. “Active” records observed upstream maintenance on the review date, not a promise of future support.
+> Review date: 2026-08-10. `pnpm dependency:check` proves direct-manifest coverage and exact pins; `pnpm-lock.yaml` pins the transitive graph; `pnpm security:audit` fails on high or critical advisories. “Active” records observed upstream maintenance on the review date, not a promise of future support.
 
 ## External direct npm dependencies
 
@@ -41,7 +41,8 @@ Internal `workspace:*` dependencies are repository-owned packages pinned by the 
 | OpenTelemetry Collector image | `otel/opentelemetry-collector:0.158.0@sha256:5b97e6e3550ec6e48a71dba6f6304d349a293af8df4ee1f51da67be94fce2ecd` | Apache-2.0 | Active 0.x without an LTS guarantee; digest/config require monthly review                           | Native Go service with a 192 MiB limiter and loopback-only OTLP ingest                                      |
 | `actions/checkout`            | `fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09`                                                                     | MIT        | Official GitHub Action v5 commit observed on review date                                            | CI-only JavaScript action; credentials persistence disabled                                                 |
 | `actions/setup-node`          | `a0853c24544627f65ddf259abe73b1d18a591444`                                                                     | MIT        | Official GitHub Action v5 commit observed on review date                                            | CI-only JavaScript action and Node distribution download                                                    |
-| `actions/upload-artifact`     | `ea165f8d65b6e75b540449e92b4886f43607fa02`                                                                     | MIT        | Official GitHub Action v4 commit observed on review date                                            | CI-only artifact compression, transfer, retention, and storage cost                                         |
+| `actions/cache`               | `55cc8345863c7cc4c66a329aec7e433d2d1c52a9`                                                                     | MIT        | Official GitHub Action v6.1.0 commit observed on review date                                        | CI-only compression and transfer of the isolated, non-release Next.js build cache                           |
+| `actions/upload-artifact`     | `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a`                                                                     | MIT        | Official GitHub Action v7.0.1 commit observed on review date                                        | CI-only Node 24 artifact compression, transfer, retention, and storage cost                                 |
 
 ## Deliberately not installed
 

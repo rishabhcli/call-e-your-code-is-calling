@@ -30,6 +30,7 @@ The repository also needs a clean-checkout command surface before domain feature
 - Bind host services to `127.0.0.1` and ports 4150-4159 only. Port 4157 is allocated to OTLP/HTTP ingest so health can prove an end-to-end collector canary rather than merely an open socket.
 - Keep the fake CALL-E service under `tests/`; its runtime schema rejects staging/production, and production configuration rejects fake mode and loopback provider URLs.
 - Record process group start signatures and container IDs/Compose labels. Shutdown signals only verified owned process groups and exact project containers, preserving the PostgreSQL volume by default.
+- Cache only `apps/operator/.next/cache` in CI, keyed by the runner OS, lockfile, and operator sources. Build preparation retains a real cache directory but deletes every other stale `.next` artifact; release output is always regenerated and is never restored from the cache.
 
 ## Consequences
 
@@ -38,6 +39,7 @@ The repository also needs a clean-checkout command surface before domain feature
 - PostgreSQL state persists across `dev:down`; destructive cleanup requires a separate future, explicit data lifecycle command.
 - The collector's 0.x contract requires a config test and regular upgrade review. It exposes no profiler, zPages, Jaeger, Zipkin, or Prometheus listener.
 - Next.js contributes server/client and native SWC/Sharp supply-chain surface. It is contained in the operator application and prohibited from domain packages.
+- CI cache restore/save adds a digest-pinned GitHub Action and remote storage/transfer, but does not make cached output authoritative: formatting, types, boundaries, tests, and the release build still run on every revision.
 - TypeScript 7 migration remains a reviewed follow-up, not an automatic upgrade.
 
 ## Verification and reversal
