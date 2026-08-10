@@ -19,3 +19,37 @@ This file is append-only. Each entry records the behavior changed, verification 
 - **Risk and rollback:** documentation only; no product behavior, external call, persistent application data, credential, or migration changed. Reverting this documentation commit restores the prior text, but would reintroduce known drift. Current-state claims are intentionally tied to baseline `a4da97327bbda9fa308bccf884e5bee00da85c21` and must be refreshed after implementation changes.
 - **Blocked:** no external blocker prevents the next local work. SDK license and live-pilot consent/provider permission remain external prerequisites only for their affected paths.
 - **Next item by section 10.1:** restore Tier 0 by fixing the CI pnpm activation ordering, reproducing and correcting the local semantic-health timeout, then obtaining green `verify-all`, clean-checkout, and `main` CI evidence before continuing Tier 1 invariant work.
+
+## 2026-08-10T08:42:00-07:00 — Tier 0 verification-gate repair
+
+- **Behavior delivered:** disabled `setup-node`'s premature package-manager cache so CI activates pinned pnpm before using it; replaced unsafe and path-shape-dependent dependency-cruiser expressions while preserving the negative framework-import fixture; removed the host `NO_COLOR` value from Playwright's forced-color subprocess tree so warning-zero E2E checks are meaningful; and made standalone `pnpm test:e2e` run exact repository-owned cleanup before returning. Refreshed the current status, support, and assumption records without claiming an operator workflow or production.
+- **Commands:** inspected GitHub Actions run `31402729203`; ran `pnpm boundary:check` plus the committed negative boundary fixture; ran failing and passing `pnpm verify-all` iterations under Node 24.19.0/pnpm 11.20.0; ran standalone `pnpm test:e2e`; verified ports 4150-4157 and `.dev/pids/` were empty after cleanup; ran Prettier on the status documents.
+- **Evidence:** the stable-source `pnpm verify-all` run passed in 45 seconds: formatting, warning-zero lint, types, 51-module/75-edge architecture check, 22-package dependency register, high-severity audit, 12 unit tests, release build, preflight/startup/semantic health, 8 integration tests, and 2 Chromium E2E smoke tests. Semantic health proved operator, API, fake CALL-E, worker, test harness, authenticated PostgreSQL schema query, and OpenTelemetry canary export. The earlier all-service readiness failure was source-version drift while tracked documentation changed after startup; the stable rerun passed without weakening readiness or increasing a timeout.
+- **Risk and rollback:** no real call, credential, provider request, external publication, or application-data migration occurred. The CI cache flag, dependency rules, and Playwright environment/cleanup changes can each be reverted independently, but doing so reintroduces a reproduced gate failure or leaked local runtime. Local PostgreSQL contained readiness schema state only and `dev:down` removed only validated repository-owned processes and containers.
+- **Blocked:** none for the next local step. Clean-checkout and remote CI proof require a committed revision, not user input.
+- **Next item by section 10.1:** commit this repair, run `pnpm verify:clean-checkout` against that exact commit, push `main`, confirm the new Actions run, record its URL, and only then select Tier 1 invariant work.
+
+## 2026-08-10T08:46:00-07:00 — Clean-checkout lint dependency repair
+
+- **Behavior delivered:** made the standalone `pnpm lint` contract build domain package declarations before type-aware ESLint resolves workspace exports. A fresh checkout no longer depends on stale local `dist/` output that is absent by design.
+- **Commands and evidence:** committed the preceding repair as `016f4dc`, then ran `pnpm verify:clean-checkout`. Bootstrap and formatting passed, while lint reported 34 unresolved-type safety errors in `calle`, `freshness`, and `review-publish`; all three import workspace packages whose exports point to generated `dist` declarations. The root lint command now creates those declarations explicitly before ESLint. No lint rule was disabled or weakened.
+- **Risk and rollback:** the change adds deterministic build time before lint but does not alter production output, package ownership, or side effects. Reverting it restores an environment-dependent clean-checkout failure.
+- **Blocked:** none.
+- **Next item by section 10.1:** amend the unpushed repair commit, rerun exact-commit clean-checkout verification, push `main`, and confirm the resulting Actions run.
+
+## 2026-08-10T08:48:00-07:00 — Cold-start ownership stabilization
+
+- **Behavior delivered:** preserved the exact process-group, command-marker, and start-signature ownership checks while replacing a single 400 ms process snapshot with a bounded 5 second identity poll. Cold clean-checkout startup may compile the `tsx` entrypoint before the process is observable; it may not bypass ownership validation or wait without a deadline.
+- **Commands and evidence:** the second exact-commit clean-checkout passed bootstrap, static checks, 12 unit tests, build, semantic health, and 8 integration tests. Its subsequent cold Playwright startup failed because the fake-provider process was not observable at the one-shot 400 ms ownership check. Cleanup still removed only the recorded resources. No readiness timeout or test retry was increased.
+- **Risk and rollback:** worst-case failure detection for a process whose identity cannot be proven increases from 400 ms to 5 seconds; actual service readiness retains its separate bounded semantic probe. Reverting restores a reproduced cold-start false negative.
+- **Blocked:** none.
+- **Next item by section 10.1:** amend the unpushed repair commit, rerun exact-commit clean-checkout verification, push `main`, and confirm the resulting Actions run.
+
+## 2026-08-10T08:52:00-07:00 — Nested-worktree Unix-socket correction
+
+- **Correction:** the prior cold-start diagnosis was incomplete. The preserved E2E failure logs showed every `tsx` service exited with `listen EINVAL` because the absolute `TMPDIR` below the nested clean worktree produced a Unix-domain socket path longer than macOS accepts. The attempted 5 second ownership poll did not address that cause and was reverted to avoid weakening or delaying the original identity check.
+- **Behavior delivered:** Playwright and its web-server tree now receive the short relative `.dev/tmp` path. The actual temporary storage remains inside the active repository/worktree, but `tsx` IPC socket names no longer include the long absolute checkout prefix.
+- **Commands and evidence:** the third clean-checkout run passed through semantic health and 8 integration tests, then retained logs showing `EINVAL` for fake CALL-E, API, worker, and test harness sockets under the long prior path. Exact cleanup completed. No readiness threshold, retry count, ownership predicate, or process deadline was loosened.
+- **Risk and rollback:** tools launched through `scripts/playwright-cli.mjs` must retain the repository root as their working directory, which is already an enforced command assumption. Reverting restores the reproduced macOS clean-worktree failure.
+- **Blocked:** none.
+- **Next item by section 10.1:** amend the unpushed repair commit, rerun exact-commit clean-checkout verification, push `main`, and confirm the resulting Actions run.

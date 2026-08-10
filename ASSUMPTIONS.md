@@ -8,7 +8,7 @@ Every unverified decision is recorded here with the safest interpretation and th
 - **Reasoning:** the approved architecture is TypeScript/Node/Next.js, pnpm is already available locally, and a workspace makes package ownership enforceable without importing application state into domain packages.
 - **Safety posture:** startup and bootstrap will reject unsupported Node or pnpm versions; no runtime will silently downgrade.
 - **Cheapest verification:** run `pnpm bootstrap`, `pnpm verify-all`, and `pnpm verify:clean-checkout`, then confirm the same revision's GitHub Actions run.
-- **Status:** implemented and partially exercised; the audited `main` CI run failed during `setup-node` before pnpm activation, and the latest local `verify-all` timed out in semantic health. The gate remains open. See `APPLICATION_STATUS.md`.
+- **Status:** implemented and locally verified by `pnpm verify-all`. The prior `main` run failed during `setup-node`; its cache ordering is repaired, but clean-checkout and new `main` CI evidence remain pending. See `APPLICATION_STATUS.md`.
 
 ## A-002 — Development infrastructure isolation
 
@@ -24,7 +24,7 @@ Every unverified decision is recorded here with the safest interpretation and th
 - **Reasoning:** a collector that merely accepts a TCP connection is not proven useful. A separate in-block ingest port lets `dev:health` send a canary and verify that it reaches the configured local export destination.
 - **Safety posture:** both host mappings bind `127.0.0.1`; no port outside 4150-4159 is allocated.
 - **Cheapest verification:** run `pnpm dev:health`, which must fail if either the collector health extension or the canary pipeline fails.
-- **Status:** implemented; a direct `pnpm dev:health` run sent and located an end-to-end canary, but the latest full verification timed out in semantic health with an empty canary export at inspection time. Reproducibility is pending; production telemetry and load/resource verification remain later-tier work.
+- **Status:** implemented; direct health and the stable-source `pnpm verify-all` run sent and located an end-to-end canary. The earlier source-revision drift failure was reproduced by concurrent tracked edits, not by accepting a socket-only result. Production telemetry and load/resource verification remain later-tier work.
 
 ## A-004 — CALL-E adapter and unresolved SDK licence
 

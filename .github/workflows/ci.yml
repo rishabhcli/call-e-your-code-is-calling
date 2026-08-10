@@ -26,6 +26,9 @@ jobs:
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version-file: .node-version
+          # setup-node's automatic package-manager cache runs before the next
+          # step activates the repository-pinned pnpm binary.
+          package-manager-cache: false
 
       - name: Activate exact pnpm
         run: |

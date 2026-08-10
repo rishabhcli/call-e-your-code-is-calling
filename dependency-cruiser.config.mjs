@@ -1,9 +1,13 @@
 import { resolve } from 'node:path';
 
 const repositoryRoot = import.meta.dirname;
-const externalPackagePath = '(?:^|/)node_modules/(?:[.]pnpm/[^/]+/node_modules/)?';
-const forbiddenDomainPackagePath = `${externalPackagePath}(?:next|react|react-dom|pg|@call-e/calle|@opentelemetry/)(?:/|$)`;
-const allowedDomainPackagePath = `${externalPackagePath}zod(?:/|$)`;
+// Dependency-cruiser matches npm edges against their import specifier (for
+// example `zod`) or a resolved package path, depending on the rule phase.
+// Match package path segments without the overlapping optional pnpm path that
+// dependency-cruiser's safe-regex validation correctly rejects.
+const forbiddenDomainPackagePath =
+  '(^|/)(next|react|react-dom|pg|@call-e/calle|@opentelemetry)(/|$)';
+const allowedDomainPackagePath = '(^|/)zod(/|$)';
 
 /** @type {import('dependency-cruiser').IConfiguration} */
 const config = {
@@ -25,7 +29,6 @@ const config = {
       severity: 'error',
       from: { path: '^packages/(import|freshness|call-plan|evidence|review-publish)/' },
       to: {
-        dependencyTypes: ['npm'],
         path: forbiddenDomainPackagePath,
       },
     },
@@ -49,8 +52,7 @@ const config = {
       severity: 'error',
       from: { pathNot: '^packages/calle/src/adapter/' },
       to: {
-        dependencyTypes: ['npm'],
-        path: `${externalPackagePath}@call-e/calle(?:/|$)`,
+        path: '(^|/)@call-e/calle(/|$)',
       },
     },
     {

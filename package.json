@@ -17,7 +17,7 @@
     "clean": "node scripts/clean.mjs",
     "format": "prettier --write --ignore-unknown .",
     "format:check": "prettier --check --ignore-unknown .",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "pnpm build:packages && eslint . --max-warnings 0",
     "typecheck": "pnpm build:packages && pnpm --recursive --if-present run typecheck && tsc --project tsconfig.tests.json --noEmit",
     "boundary:check": "depcruise --config dependency-cruiser.config.mjs packages apps/operator/src tests scripts",
     "dependency:check": "node scripts/check-dependency-register.mjs",

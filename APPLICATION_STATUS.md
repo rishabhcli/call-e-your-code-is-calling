@@ -2,8 +2,9 @@
 
 > **Current state:** not yet in production.
 >
-> **Implementation baseline audited:** `a4da97327bbda9fa308bccf884e5bee00da85c21`
-> on 2026-08-10.
+> **Application baseline audited:** `a4da97327bbda9fa308bccf884e5bee00da85c21`
+> on 2026-08-10. Documentation and Tier 0 verification repairs after that
+> baseline do not add an operator workflow or enable real calls.
 >
 > This file is the current-state companion to the append-only
 > [`PROGRESS.md`](./PROGRESS.md) journal. Update this file when the implementation
@@ -24,6 +25,8 @@ Status terms in this document are deliberately strict:
 - **Not implemented:** no supported product behavior exists for that surface.
 - **Failing gate:** a required verification surface is red, so the tier cannot
   be treated as exited.
+- **Verification pending:** local behavior is green, but a required committed or
+  remote proof has not completed yet.
 - **External prerequisite:** work needs a credential, provider decision,
   consent record, or third-party action. It does not block unrelated local work.
 
@@ -36,10 +39,11 @@ cannot regenerate.
 The repository has a substantial **Tier 0 foundation** and several early typed
 domain boundaries. The exact toolchain, repository-isolated runtime, semantic
 health checks, dependency policy, architecture rules, local fake-provider
-boundary, and readiness-only operator UI exist. A manual local audit verified 12
-unit tests and all repository-owned services on ports 4150-4157, but a subsequent
-`pnpm verify-all` run failed its semantic-health step. Treat local runtime health
-as intermittent until that failure is reproduced and fixed.
+boundary, and readiness-only operator UI exist. A stable local `pnpm verify-all`
+run passed all current format, lint, type, architecture, dependency, audit, unit,
+build, lifecycle, semantic-health, integration, and Chromium E2E steps on
+2026-08-10. This proves the local foundation only; it does not prove the product
+workflow or production conditions.
 
 The application workflow does **not** yet exist end to end. There is no directory
 upload/import pipeline, application data schema, persistent call-plan approval,
@@ -47,39 +51,33 @@ CALL-E REST adapter, webhook/poll reconciler, transcript grounding engine,
 conflict queue, authenticated review flow, immutable snapshot publisher, hosted
 environment, live pilot, or submission artifact.
 
-The first gate is red in two places:
-
-1. The latest `main` CI run for the audited baseline failed before repository
-   verification because `actions/setup-node` attempted to locate pnpm for its
-   automatic cache before the following step activated pinned pnpm 11.20.0. See
-   [GitHub Actions run 31402729203](https://github.com/rishabhcli/call-e-your-code-is-calling/actions/runs/31402729203).
-2. A later local `pnpm verify-all` run passed format, lint, types, architecture,
-   dependencies, audit, unit tests, build, preflight, and startup, then timed out
-   in semantic health after 120,831 ms. Its OpenTelemetry canary output was empty
-   at inspection time. That observation narrows the investigation but does not
-   yet prove the root cause.
-
-Until both results are green and repeatable, Tier 0 remains **in progress** even
-though its local pieces are largely present.
+Tier 0 remains **in progress** until the repaired revision passes both
+`pnpm verify:clean-checkout` and GitHub Actions on `main`. The preceding
+[GitHub Actions run 31402729203](https://github.com/rishabhcli/call-e-your-code-is-calling/actions/runs/31402729203)
+failed because `actions/setup-node` tried to locate pnpm before the next step
+activated the pinned pnpm binary; the workflow now disables that premature
+automatic cache. The earlier semantic-health timeout occurred while tracked
+documentation changed after `dev:up`, which intentionally changed the source
+revision expected by every readiness document. A stable-source rerun passed.
 
 ## End-goal ladder
 
-| Goal tier                             | Current status      | What exists                                                                                                                                                                                                                    | Exit-blocking gap                                                                                                                                                                         |
-| ------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **0 — Executable foundation**         | **Failing gate**    | Exact Node/pnpm contract, frozen lockfile, CI workflow, strict checks, boundary enforcement, isolated ports/processes/Compose, semantic health, ADRs, dependency register, local fake provider, unit/integration/E2E harnesses | Main CI is red, local full verification most recently timed out in semantic health, and no green clean-checkout evidence for the audited revision is committed or linked from the journal |
-| **1 — Machine-enforced invariants**   | **Partial**         | Schemas and narrow tests cover temporal claims, approved plan construction, safety refusals, idempotency-key derivation, established-only publication candidates, and public projection without transcript excerpts            | All eight invariants still lack complete property/fault/observability/database enforcement; see the invariant audit below                                                                 |
-| **2 — Hard technical core**           | **Partial**         | Initial claim, priority, call-plan, external-call-state, evidence, and public-delta types                                                                                                                                      | No complete importer, budget optimizer, provider adapter/reconciler, grounding validator, conflict workflow, persistence, or run ledger                                                   |
-| **3 — Adapters and trust boundaries** | **Partial**         | Zod runtime configuration, bounded local HTTP services, dependency boundary rules, test-only fake provider, foundation threat model                                                                                            | No real directory parser, provider contract fixture/adapter, webhook boundary, file quarantine, authentication, or per-boundary threat analysis                                           |
-| **4 — First vertical slice**          | **Not implemented** | Readiness-only UI and services                                                                                                                                                                                                 | The eight-step canonical operator workflow cannot be performed                                                                                                                            |
-| **5 — Refusal and abstention**        | **Partial**         | `compileApprovedCallPlan` refuses several unsafe drafts; publication schema excludes non-established evidence                                                                                                                  | Refusals are not connected to persistent state, provider invocation, review UI, public unknown states, cancellation, or recovery                                                          |
-| **6 — Complete ownership areas**      | **Not implemented** | Every planned package directory exists with an initial narrow boundary                                                                                                                                                         | None of the six packages or the operator app is a complete production surface                                                                                                             |
-| **7 — Verification lattice**          | **Partial**         | 12 unit tests, 8 integration tests, 2 Chromium E2E smoke tests, strict format/lint/type/boundary/dependency checks                                                                                                             | Property/fuzz, provider contract, domain E2E, evaluation, authorization/privacy, accessibility, performance, resilience, mutation, and coverage gates are absent                          |
-| **8 — Evaluation and regeneration**   | **Not implemented** | Verification commands emit transient local summaries                                                                                                                                                                           | No immutable manifests, held-out corpus, metric regeneration, byte-identical delta reproduction, or committed evidence artifacts                                                          |
-| **9 — Performance and chaos**         | **Not implemented** | Initial HTTP/database/collector limits exist                                                                                                                                                                                   | No declared product budgets, load-to-failure result, chaos matrix, lifecycle crash-point sweep, or enforced performance gate                                                              |
-| **10 — Security and supply chain**    | **Partial**         | Exact dependency/image pins, advisory check, dependency register, log redaction list, foundation threat model                                                                                                                  | No authentication/authorization model, webhook authenticity implementation, transcript access controls, SBOM/release manifest, malicious-input matrix, or complete privacy review         |
-| **11 — Operational readiness**        | **Partial**         | Typed startup config, live/readiness distinction, local structured logs, PostgreSQL readiness migration, local OpenTelemetry canary                                                                                            | No production telemetry destination/dashboard, SLOs, alerts/runbooks, backup/restore drill, deployment/rollback, emergency disable, retention, or incident process                        |
-| **12 — Production cutover**           | **Not implemented** | None                                                                                                                                                                                                                           | Every production condition in `GOAL.md` section 5 remains unmet                                                                                                                           |
-| **13 — Submission**                   | **Not implemented** | Hackathon requirements and selected demo narrative are documented                                                                                                                                                              | No product name, hosted workflow, community PR, public demo video, screenshots, Devpost content, or final submission                                                                      |
+| Goal tier                             | Current status           | What exists                                                                                                                                                                                                                                                 | Exit-blocking gap                                                                                                                                                                 |
+| ------------------------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **0 — Executable foundation**         | **Verification pending** | Exact Node/pnpm contract, frozen lockfile, CI workflow, strict checks, boundary enforcement, isolated ports/processes/Compose, semantic health, ADRs, dependency register, local fake provider, unit/integration/E2E harnesses; local `verify-all` is green | The repaired committed revision still needs a green clean-checkout run and a green `main` Actions run linked from the journal                                                     |
+| **1 — Machine-enforced invariants**   | **Partial**              | Schemas and narrow tests cover temporal claims, approved plan construction, safety refusals, idempotency-key derivation, established-only publication candidates, and public projection without transcript excerpts                                         | All eight invariants still lack complete property/fault/observability/database enforcement; see the invariant audit below                                                         |
+| **2 — Hard technical core**           | **Partial**              | Initial claim, priority, call-plan, external-call-state, evidence, and public-delta types                                                                                                                                                                   | No complete importer, budget optimizer, provider adapter/reconciler, grounding validator, conflict workflow, persistence, or run ledger                                           |
+| **3 — Adapters and trust boundaries** | **Partial**              | Zod runtime configuration, bounded local HTTP services, dependency boundary rules, test-only fake provider, foundation threat model                                                                                                                         | No real directory parser, provider contract fixture/adapter, webhook boundary, file quarantine, authentication, or per-boundary threat analysis                                   |
+| **4 — First vertical slice**          | **Not implemented**      | Readiness-only UI and services                                                                                                                                                                                                                              | The eight-step canonical operator workflow cannot be performed                                                                                                                    |
+| **5 — Refusal and abstention**        | **Partial**              | `compileApprovedCallPlan` refuses several unsafe drafts; publication schema excludes non-established evidence                                                                                                                                               | Refusals are not connected to persistent state, provider invocation, review UI, public unknown states, cancellation, or recovery                                                  |
+| **6 — Complete ownership areas**      | **Not implemented**      | Every planned package directory exists with an initial narrow boundary                                                                                                                                                                                      | None of the six packages or the operator app is a complete production surface                                                                                                     |
+| **7 — Verification lattice**          | **Partial**              | 12 unit tests, 8 integration tests, 2 Chromium E2E smoke tests, strict format/lint/type/boundary/dependency checks                                                                                                                                          | Property/fuzz, provider contract, domain E2E, evaluation, authorization/privacy, accessibility, performance, resilience, mutation, and coverage gates are absent                  |
+| **8 — Evaluation and regeneration**   | **Not implemented**      | Verification commands emit transient local summaries                                                                                                                                                                                                        | No immutable manifests, held-out corpus, metric regeneration, byte-identical delta reproduction, or committed evidence artifacts                                                  |
+| **9 — Performance and chaos**         | **Not implemented**      | Initial HTTP/database/collector limits exist                                                                                                                                                                                                                | No declared product budgets, load-to-failure result, chaos matrix, lifecycle crash-point sweep, or enforced performance gate                                                      |
+| **10 — Security and supply chain**    | **Partial**              | Exact dependency/image pins, advisory check, dependency register, log redaction list, foundation threat model                                                                                                                                               | No authentication/authorization model, webhook authenticity implementation, transcript access controls, SBOM/release manifest, malicious-input matrix, or complete privacy review |
+| **11 — Operational readiness**        | **Partial**              | Typed startup config, live/readiness distinction, local structured logs, PostgreSQL readiness migration, local OpenTelemetry canary                                                                                                                         | No production telemetry destination/dashboard, SLOs, alerts/runbooks, backup/restore drill, deployment/rollback, emergency disable, retention, or incident process                |
+| **12 — Production cutover**           | **Not implemented**      | None                                                                                                                                                                                                                                                        | Every production condition in `GOAL.md` section 5 remains unmet                                                                                                                   |
+| **13 — Submission**                   | **Not implemented**      | Hackathon requirements and selected demo narrative are documented                                                                                                                                                                                           | No product name, hosted workflow, community PR, public demo video, screenshots, Devpost content, or final submission                                                              |
 
 ## Current implementation by ownership area
 
@@ -241,22 +239,21 @@ pnpm dev:health     # operator, API, fake CALL-E, worker, test harness,
                     # PostgreSQL query, and OpenTelemetry canary passed
 pnpm test           # 7 files, 12 tests passed
 pnpm dev:down       # stopped only validated repository-owned resources
+pnpm verify-all     # all current checks passed, including 8 integration tests
+                    # and 2 Chromium E2E smoke tests
 ```
 
-The tracked test inventory at the baseline contains 12 unit tests, 8 integration
-tests, and 2 Chromium E2E smoke tests. Test counts describe inventory only; they
-are not a coverage or correctness claim.
+The full local verification passed with 12 unit tests, 8 integration tests, and
+2 Chromium E2E smoke tests. `pnpm test:e2e` also proved that its repository-owned
+services are removed after the standalone test command. Test counts describe
+inventory only; they are not a coverage or correctness claim.
 
-### Failing or not currently proven
+### Not currently proven
 
-- `main` CI is red at the tool-setup step described above.
-- The latest local `pnpm verify-all` summary is `failed`: its first ten steps
-  passed through development startup, then semantic health exited 1 after
-  120,831 ms. Re-run without another lifecycle owner, preserve sanitized probe
-  detail, and fix the failing readiness dependency rather than increasing the
-  timeout.
-- `pnpm verify:clean-checkout` has no green result for the audited baseline in
-  this handoff.
+- The repaired committed revision does not yet have a green
+  `pnpm verify:clean-checkout` result recorded in this handoff.
+- The repaired workflow does not yet have a green `main` Actions run; the last
+  completed run is the historical setup failure linked above.
 - `evidence/` contains policy documentation only; it contains no committed,
   regenerable result artifact yet.
 - Coverage, mutation, property/fuzz, accessibility, security authorization,
@@ -266,12 +263,10 @@ are not a coverage or correctness claim.
 
 Follow `GOAL.md` section 10.1. Based on this audit, the queue starts here:
 
-1. **Restore the Tier 0 gate.** Fix the `setup-node`/pnpm activation ordering in
-   `.github/workflows/ci.yml`; reproduce the local semantic-health timeout and
-   determine which dependency/canary failed; then run `pnpm verify-all` and
-   `pnpm verify:clean-checkout` at the committed revision. Push and confirm the
-   resulting `main` Actions run is green. Append the exact run URL, probe failure,
-   fix, and commands to `PROGRESS.md`, then refresh this file.
+1. **Finish Tier 0 verification.** Run `pnpm verify:clean-checkout` at the
+   committed repair revision, push, and confirm the resulting `main` Actions run
+   is green. Append the exact run URL and commands to `PROGRESS.md`, then refresh
+   this file. If either fails, that failure remains the first work item.
 2. **Complete Tier 1 before broad feature work.** For each invariant above, add
    the missing machine authority, property test, fault case, boundary behavior,
    and observable alert/runbook link. Start with I1 and I3 because they guard a
