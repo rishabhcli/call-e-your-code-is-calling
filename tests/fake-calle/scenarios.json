@@ -1,0 +1,44 @@
+[
+  {
+    "id": "clear_changed_hours",
+    "terminalStatus": "completed",
+    "taskCompleted": true,
+    "completionConfidence": 0.98,
+    "transcriptTurns": [
+      { "speaker": "bot", "text": "Are you open today, and what time do you close?" },
+      { "speaker": "user", "text": "Yes, this cooling center closes at 6 PM today." }
+    ]
+  },
+  {
+    "id": "explicit_refusal",
+    "terminalStatus": "completed",
+    "taskCompleted": false,
+    "completionConfidence": 1,
+    "transcriptTurns": [
+      {
+        "speaker": "user",
+        "text": "We do not want automated verification calls. Please opt us out."
+      }
+    ]
+  },
+  {
+    "id": "no_answer",
+    "terminalStatus": "failed",
+    "taskCompleted": false,
+    "completionConfidence": 1,
+    "failureCode": "no_answer",
+    "transcriptTurns": []
+  },
+  {
+    "id": "ambiguous_usually",
+    "terminalStatus": "completed",
+    "taskCompleted": false,
+    "completionConfidence": 0.42,
+    "transcriptTurns": [
+      {
+        "speaker": "user",
+        "text": "We are usually open until around 6, but I am not sure about today."
+      }
+    ]
+  }
+]

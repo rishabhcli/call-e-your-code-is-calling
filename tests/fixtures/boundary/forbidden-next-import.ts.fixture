@@ -1,0 +1,3 @@
+import NextServer from 'next/server';
+
+void NextServer;

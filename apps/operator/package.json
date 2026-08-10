@@ -1,0 +1,31 @@
+{
+  "name": "@call-e-directory/operator",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node ../../scripts/prepare-operator-build.mjs && next build && tsc --project tsconfig.services.json",
+    "typecheck": "tsc --project tsconfig.typecheck.json --noEmit"
+  },
+  "dependencies": {
+    "@call-e-directory/call-plan": "workspace:*",
+    "@call-e-directory/calle": "workspace:*",
+    "@call-e-directory/evidence": "workspace:*",
+    "@call-e-directory/freshness": "workspace:*",
+    "@call-e-directory/import": "workspace:*",
+    "@call-e-directory/review-publish": "workspace:*",
+    "next": "16.3.0",
+    "pg": "8.22.0",
+    "pino": "10.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "@types/pg": "8.21.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "typescript": "6.0.3"
+  }
+}

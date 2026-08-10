@@ -1,0 +1,15 @@
+.next
+.dev
+coverage
+dist
+node_modules
+playwright-report
+test-results
+pnpm-lock.yaml
+
+# Authoritative specifications are preserved verbatim.
+AGENTS.md
+GOAL.md
+HACKATHON.md
+README.md
+WINNING_IDEA.md

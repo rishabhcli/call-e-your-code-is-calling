@@ -6,7 +6,7 @@
 
 ## Repository status
 
-Implementation has not started. The repository currently contains the authoritative product and competition specifications. This README defines the production target that future code must satisfy; it does not claim that planned commands or components already exist.
+Implementation is underway. The repository contains the Tier 0 executable foundation, repository-isolated local services, and early typed domain packages; none of those intermediate surfaces constitutes production. The current evidence-backed state is recorded in `PROGRESS.md`, `SUPPORT_MATRIX.md`, and `evidence/`. Until every condition in `GOAL.md` section 5 is simultaneously verified, the accurate status is **not yet in production**.
 
 | Document | Authority |
 |---|---|
@@ -14,6 +14,7 @@ Implementation has not started. The repository currently contains the authoritat
 | [WINNING_IDEA.md](./WINNING_IDEA.md) | Selected concept, hard technical core, validation, build order, demo and risk analysis |
 | [README.md](./README.md) | Product contract, architecture, production and release expectations |
 | [AGENTS.md](./AGENTS.md) | Binding implementation rules for every coding agent working in this repository |
+| [GOAL.md](./GOAL.md) | Standing goal, tier order, verification evidence, and repository-isolated runtime contract |
 
 If these documents disagree, preserve the external requirements in HACKATHON.md, then the product intent in WINNING_IDEA.md, and resolve the conflict explicitly in an ADR instead of guessing.
 
@@ -52,7 +53,7 @@ A non-goal may become part of the product only after the core release gates pass
 
 Authenticated operator service with separate planner, caller, reconciler, reviewer, and publisher authorities. Real calls are disabled by default outside configured environments and require preview/approval.
 
-### Planned component boundaries
+### Component boundaries
 
 | Area | Production responsibility |
 |---|---|
@@ -66,7 +67,7 @@ Authenticated operator service with separate planner, caller, reconciler, review
 
 Dependencies should flow from applications/adapters toward typed domain packages. Domain logic must remain testable without UI, network, cloud credentials, or third-party services. Infrastructure code may assemble components but must not become the only place where product invariants are enforced.
 
-### Target technology foundation
+### Selected technology foundation
 
 - TypeScript/Node and React/Next.js
 - @call-e/calle SDK or documented API at runtime
@@ -140,7 +141,7 @@ Performance budgets must be set before optimization and enforced in CI for suppo
 
 Accessibility is a release gate, not a polish task. The production interface must include semantic structure, keyboard support, visible focus, sufficient contrast, non-color status cues, reduced-motion behavior where relevant, zoom/reflow, readable errors, and an equivalent representation for information conveyed through canvas, charts, audio, maps, camera, or animation.
 
-## Planned repository layout
+## Repository layout
 
 ```text
 /
@@ -148,6 +149,9 @@ Accessibility is a release gate, not a polish task. The production interface mus
 ├── AGENTS.md                 # Binding implementation rules for coding agents
 ├── HACKATHON.md              # External rules and submission facts
 ├── WINNING_IDEA.md           # Selected product/technical blueprint
+├── GOAL.md                   # Standing goal-mode and verification contract
+├── ports.env                 # Exclusive local port allocation
+├── compose.yaml              # Repository-isolated PostgreSQL and telemetry
 ├── packages/import/
 ├── packages/freshness/
 ├── packages/call-plan/
@@ -157,28 +161,31 @@ Accessibility is a release gate, not a polish task. The production interface mus
 ├── apps/operator/
 ├── tests/                    # Unit, property, integration, E2E, resilience
 ├── docs/                     # ADRs, threat model, runbooks, evaluation
-└── infra/                    # Reproducible deployment and environment policy
+├── evidence/                 # Regenerable, sanitized verification artifacts
+├── scripts/                  # Task, lifecycle, and verification orchestration
+└── infra/                    # Reproducible local/deployment configuration
 ```
 
 This is a boundary contract, not a command to create empty directories. Add a directory when it owns working code, tests, and documentation.
 
 ## Development command contract
 
-No commands are advertised as working until the corresponding toolchain is committed. The first production scaffold must expose one documented, cross-platform command surface, preferably through a checked-in task runner or Makefile:
+The checked-in pnpm task surface fails closed on unsupported tool versions and keeps runtime state under the ignored `.dev/` namespace. Node.js `24.19.0`, pnpm `11.20.0`, Docker, Git, and `lsof` are required. Commands that exercise the complete runtime bind only `127.0.0.1:4150`–`4157`.
 
-| Command | Required behavior |
+| Command | Current behavior |
 |---|---|
-| `bootstrap` | Verify tool versions, install locked dependencies, initialize only local non-secret state |
-| `check` | Format check, lint, type/static analysis, schema/config validation |
-| `test` | Deterministic unit and property suites |
-| `test-integration` | Real boundary tests using isolated local/test dependencies |
-| `test-e2e` | Supported user workflows and failure states |
-| `eval` | Reproduce committed domain evaluation and metrics |
-| `build` | Produce release artifacts from a clean checkout |
-| `run-local` | Start the complete local system or a documented production-equivalent subset |
-| `release-check` | Run all blocking gates, artifact/SBOM generation, and policy checks |
+| `pnpm bootstrap` | Verify exact Node/pnpm versions, install the frozen lockfile, and install the pinned Chromium runtime into `.dev/cache/` |
+| `pnpm check` | Check formatting, warning-zero lint, types, architecture boundaries, dependency policy, and high-severity advisories |
+| `pnpm test` | Run the deterministic unit suite without requiring a standing runtime |
+| `pnpm test:integration` | Exercise the real repository-isolated PostgreSQL, telemetry, process-ownership, and fake-provider boundaries after `dev:up` |
+| `pnpm test:e2e` | Let the explicit Playwright harness own, health-check, exercise, and stop the local system |
+| `pnpm build` | Compile domain packages and produce the Next.js release build |
+| `pnpm dev:preflight` | Reject invalid tools, namespaces, ports, bindings, ownership metadata, or foreign listeners without killing anything |
+| `pnpm dev:up` / `pnpm dev:health` / `pnpm dev:down` | Start, semantically verify, and exactly stop only this repository's local services |
+| `pnpm verify-all` | Run every current Tier 0 gate, including runtime integration and browser E2E, and reject warning output |
+| `pnpm verify:clean-checkout` | Repeat bootstrap and `verify-all` in a detached worktree at the committed revision and require a clean result |
 
-A new contributor should be able to move from a clean checkout to a verified local system without tribal knowledge.
+Evaluation, release-manifest/SBOM, deployment, and production release commands are not advertised yet because their later-tier implementations and evidence do not exist. A new contributor should be able to move from a clean checkout to the currently verified local foundation without tribal knowledge.
 
 ## Environment model
 

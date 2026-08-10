@@ -1,0 +1,59 @@
+name: verify
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  verify-all:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out exact revision
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - name: Install exact Node.js
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version-file: .node-version
+
+      - name: Activate exact pnpm
+        run: |
+          node scripts/run-with-warning-gate.mjs -- corepack enable
+          node scripts/run-with-warning-gate.mjs -- corepack prepare pnpm@11.20.0 --activate
+
+      - name: Install locked dependencies
+        run: node scripts/run-with-warning-gate.mjs -- pnpm bootstrap
+
+      - name: Install pinned Chromium runtime
+        run: node scripts/run-with-warning-gate.mjs -- node scripts/playwright-cli.mjs install --with-deps chromium
+
+      - name: Verify all gates
+        env:
+          CI: '1'
+        run: pnpm verify-all
+
+      - name: Write allowlisted CI evidence
+        if: always()
+        env:
+          CI_JOB_STATUS: ${{ job.status }}
+        run: node scripts/finalize-ci-evidence.mjs .dev/logs/verify-summary.json .dev/logs/ci-evidence.json
+
+      - name: Upload allowlisted CI evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: verify-all-${{ github.sha }}
+          path: .dev/logs/ci-evidence.json
+          if-no-files-found: error
+          retention-days: 14

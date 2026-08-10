@@ -1,0 +1,55 @@
+name: call-e-your-code-is-calling
+
+services:
+  postgres:
+    image: postgres:18.4-bookworm@sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382
+    container_name: call-e-your-code-is-calling-postgres
+    environment:
+      POSTGRES_DB: call_e_your_code_is_calling
+      POSTGRES_PASSWORD: local-development-only
+      POSTGRES_USER: call_e_your_code_is_calling
+    ports:
+      - '127.0.0.1:4155:5432'
+    volumes:
+      - call_e_your_code_is_calling_postgres:/var/lib/postgresql
+      - ./infra/postgres/migrations:/migrations:ro
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U call_e_your_code_is_calling -d call_e_your_code_is_calling -h 127.0.0.1',
+        ]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+      start_period: 5s
+    restart: 'no'
+    networks:
+      - runtime
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.158.0@sha256:5b97e6e3550ec6e48a71dba6f6304d349a293af8df4ee1f51da67be94fce2ecd
+    container_name: call-e-your-code-is-calling-otel-collector
+    command: ['--config=/etc/otelcol/config.yaml']
+    ports:
+      - '127.0.0.1:4156:13133'
+      - '127.0.0.1:4157:4318'
+    volumes:
+      - ./infra/otel/config.yaml:/etc/otelcol/config.yaml:ro
+    healthcheck:
+      test: ['CMD', '/otelcol', 'validate', '--config=/etc/otelcol/config.yaml']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    restart: 'no'
+    networks:
+      - runtime
+
+networks:
+  runtime:
+    name: call-e-your-code-is-calling-runtime
+
+volumes:
+  call_e_your_code_is_calling_postgres:
+    name: call-e-your-code-is-calling-postgres-data
