@@ -6,7 +6,7 @@
 
 ## Repository status
 
-Implementation is underway. The repository contains most of the Tier 0 executable foundation, repository-isolated local services, and early typed domain packages; none of those intermediate surfaces constitutes an operator workflow or production. The current implementation, invariant gaps, verification state, and ordered next-agent queue are recorded in [`APPLICATION_STATUS.md`](./APPLICATION_STATUS.md). Historical commands and findings remain in the append-only [`PROGRESS.md`](./PROGRESS.md) journal. Until every condition in `GOAL.md` section 5 is simultaneously verified, the accurate status is **not yet in production**.
+Implementation is underway. The repository contains a verified Tier 0 executable foundation, repository-isolated local services, and early typed domain packages; none of those intermediate surfaces constitutes an operator workflow or production. The current implementation, invariant gaps, verification state, and ordered next-agent queue are recorded in [`APPLICATION_STATUS.md`](./APPLICATION_STATUS.md). Historical commands and findings remain in the append-only [`PROGRESS.md`](./PROGRESS.md) journal. Until every condition in `GOAL.md` section 5 is simultaneously verified, the accurate status is **not yet in production**.
 
 | Document | Authority |
 |---|---|

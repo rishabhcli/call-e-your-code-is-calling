@@ -8,7 +8,7 @@ Every unverified decision is recorded here with the safest interpretation and th
 - **Reasoning:** the approved architecture is TypeScript/Node/Next.js, pnpm is already available locally, and a workspace makes package ownership enforceable without importing application state into domain packages.
 - **Safety posture:** startup and bootstrap will reject unsupported Node or pnpm versions; no runtime will silently downgrade.
 - **Cheapest verification:** run `pnpm bootstrap`, `pnpm verify-all`, and `pnpm verify:clean-checkout`, then confirm the same revision's GitHub Actions run.
-- **Status:** implemented and locally verified by `pnpm verify-all`. The prior `main` run failed during `setup-node`; its cache ordering is repaired, but clean-checkout and new `main` CI evidence remain pending. See `APPLICATION_STATUS.md`.
+- **Status:** implemented and verified locally, from an exact clean checkout, and by `main` GitHub Actions run `31407636737` at commit `a6dae52`. See `APPLICATION_STATUS.md`.
 
 ## A-002 — Development infrastructure isolation
 
